@@ -219,17 +219,21 @@
         realmProgress.textContent = (data.overallProgress*100).toFixed(2)
         const realmUpdate = headerButton.querySelector('.last-update')
         realmUpdate.textContent = updatedDisplayText
+        if (data.overallProgress > 0.99999) {
+            const realmUpdateWrapper = headerButton.querySelector('.updated-wrapper')
+            realmUpdateWrapper.textContent = ""
+        }
         const allianceChart = collapse.querySelector('.alliance-chart')
         allianceChart.setAttribute('id', allianceChartId)
         const allianceProgress = collapse.querySelector('.alliance-progress')
         allianceProgress.textContent = (data.allianceProgress*100).toFixed(2)
-        const allianceProgressUnderlay = collapse.querySelector('.alliance-progress-underlay')
+        //const allianceProgressUnderlay = collapse.querySelector('.alliance-progress-underlay')
         //allianceProgressUnderlay.setAttribute('style', `background-color: ${color(data.allianceProgress*100)}; width: ${data.allianceProgress*100}%`)
         const hordeChart = collapse.querySelector('.horde-chart')
         hordeChart.setAttribute('id', hordeChartId)
         const hordeProgress = collapse.querySelector('.horde-progress')
         hordeProgress.textContent = (data.hordeProgress*100).toFixed(2)
-        const hordeProgressUnderlay = collapse.querySelector('.horde-progress-underlay')
+        //const hordeProgressUnderlay = collapse.querySelector('.horde-progress-underlay')
         //hordeProgressUnderlay.setAttribute('style', `background-color: ${color(data.allianceProgress*100)}; width: ${data.allianceProgress*100}%`)
 
         body.appendChild(clone)
