@@ -66,7 +66,7 @@
                 <div class="progress-underlay"></div>
                 <h2 class="mb-0">
                     <button class="btn btn-block text-left" type="button" data-toggle="collapse" aria-expanded="true">
-                        <span class="realm-name"></span> - <span class="realm-progress"></span>% <span class="updated-wrapper">(updated <span class="last-update"></span> ago)</span>
+                        <span class="realm-name"></span> - <span class="realm-progress">xx.xx</span> <span class="updated-wrapper">(updated <span class="last-update"></span> ago)</span>
                     </button>
                 </h2>
             </div>
@@ -74,12 +74,12 @@
                 <div class="card-body">
                     <h3>
                         <div class="alliance-progress-underlay progress-underlay"></div>
-                        <span class="progress-wrapper">Alliance - <span class="alliance-progress">xx.xx</span>%</span>
+                        <span class="progress-wrapper">Alliance - <span class="alliance-progress">xx.xx</span></span>
                     </h3>
                     <div class="alliance-chart"></div>
                     <h3>
                         <div class="horde-progress-underlay progress-underlay"></div>
-                        <span class="progress-wrapper">Horde - <span class="horde-progress">xx.xx</span>%</span>
+                        <span class="progress-wrapper">Horde - <span class="horde-progress">xx.xx</span></span>
                     </h3>
                     <div class="horde-chart"></div>
                 </div>
@@ -216,7 +216,7 @@
         const realmName = headerButton.querySelector('.realm-name')
         realmName.textContent = data.realm
         const realmProgress = headerButton.querySelector('.realm-progress')
-        realmProgress.textContent = (data.overallProgress*100).toFixed(2)
+        realmProgress.textContent = `${(data.overallProgress*100).toFixed(2)}%`
         const realmUpdate = headerButton.querySelector('.last-update')
         realmUpdate.textContent = updatedDisplayText
         if (data.overallProgress > 0.99999) {
@@ -226,13 +226,13 @@
         const allianceChart = collapse.querySelector('.alliance-chart')
         allianceChart.setAttribute('id', allianceChartId)
         const allianceProgress = collapse.querySelector('.alliance-progress')
-        allianceProgress.textContent = (data.allianceProgress*100).toFixed(2)
+        allianceProgress.textContent = `${(data.allianceProgress*100).toFixed(2)}%`
         //const allianceProgressUnderlay = collapse.querySelector('.alliance-progress-underlay')
         //allianceProgressUnderlay.setAttribute('style', `background-color: ${color(data.allianceProgress*100)}; width: ${data.allianceProgress*100}%`)
         const hordeChart = collapse.querySelector('.horde-chart')
         hordeChart.setAttribute('id', hordeChartId)
         const hordeProgress = collapse.querySelector('.horde-progress')
-        hordeProgress.textContent = (data.hordeProgress*100).toFixed(2)
+        hordeProgress.textContent = `${(data.hordeProgress*100).toFixed(2)}%`
         //const hordeProgressUnderlay = collapse.querySelector('.horde-progress-underlay')
         //hordeProgressUnderlay.setAttribute('style', `background-color: ${color(data.allianceProgress*100)}; width: ${data.allianceProgress*100}%`)
 
