@@ -4,6 +4,7 @@
     <meta charset='utf-8' />
     <title>War Effort Tracker</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/js/bootstrap.min.js" integrity="sha384-XEerZL0cuoUbHE4nZReLT7nx9gQrQreJekYhJD9WNWhH8nEW+0c5qq7aIo2Wl30J" crossorigin="anonymous"></script>
@@ -55,6 +56,15 @@
         h3 .progress-wrapper {
             z-index: 1;
             position: relative;
+        }
+        .accordion .card-header button:after {
+            font-family: 'FontAwesome';
+            float: left;
+            content: "\f067";
+            padding-right: 4px;
+        }
+        .accordion .card-header button.open:after {
+            content: "\f068";
         }
     </style>
 </head>
@@ -240,6 +250,13 @@
         drawChart('#'+allianceChartId, data.allianceData.reverse())
         drawChart('#'+hordeChartId, data.hordeData.reverse())
     }
+    $('.collapse')
+        .on('hide.bs.collapse', function() {
+            $(this.parentNode.querySelector('button')).removeClass('open')
+        })
+        .on('show.bs.collapse', function() {
+            $(this.parentNode.querySelector('button')).addClass('open')
+        })
 </script>
 </body>
 </html>
