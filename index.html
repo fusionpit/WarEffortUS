@@ -162,7 +162,6 @@
     }
 
     const now = Date.now() + new Date().getTimezoneOffset() * 60 * 1000
-    let minCaptureDate = now
     realmData = window.realmData.map(d=>{
         const parseFactionData = i=>{
             const item = ITEMS[i.i]
@@ -181,9 +180,7 @@
         totalHordeTotal += HORDE_TOTAL
         const overallProgress = ((allianceProgress+hordeProgress)/(ALLIANCE_TOTAL+HORDE_TOTAL)).toFixed(4)
         const captureDate = new Date(d.cap)
-        if (captureDate < minCaptureDate && overallProgress < 1) {
-            minCaptureDate = captureDate;
-        }
+
         return {
             captureDate: captureDate,
             realm: d.r,
@@ -196,7 +193,7 @@
     })
 
     const allRealms = {
-        captureDate: minCaptureDate,
+        captureDate: now,
         realm: ALL_REALMS_NAME,
         overallProgress: ((totalAllianceProgress+totalHordeProgress)/(totalAllianceTotal+totalHordeTotal)).toFixed(4),
         allianceProgress: (totalAllianceProgress/totalAllianceTotal).toFixed(4),
@@ -342,7 +339,7 @@
         $(realmProgress).data('progress', data.overallProgress)
         const realmUpdate = headerButton.querySelector('.last-update')
         realmUpdate.textContent = updatedDisplayText
-        if (data.overallProgress > 0.99999) {
+        if (data.overallProgress > 0.99999 || data.realm === ALL_REALMS_NAME) {
             const realmUpdateWrapper = headerButton.querySelector('.updated-wrapper')
             realmUpdateWrapper.textContent = ""
         }
