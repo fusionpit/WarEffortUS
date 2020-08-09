@@ -28,6 +28,9 @@
         .inner-label {
             fill: black
         }
+        .inner-label.opposite {
+            fill: white
+        }
         .updated-wrapper {
             float: right;
             color: #2f4f4f;
@@ -36,6 +39,9 @@
         }
         .card-header {
             position: relative;
+        }
+        .card-header.opposite h2 button {
+            color: white;
         }
         .progress-underlay {
             display: inline-block;
@@ -49,6 +55,9 @@
         h2 {
             z-index: 1;
             position: relative;
+        }
+        .all-realms .realm-name {
+            font-weight: bold;
         }
         h3 {
             padding: 3px;
@@ -99,33 +108,103 @@
         </div>
     </div>
 </template>
+<div class="dropdown">
+    <button class="btn btn-lg btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Sort By
+    </button>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+        <button class="dropdown-item active" type="button" data-func="ascR">Realm: A to Z</button>
+        <button class="dropdown-item" type="button" data-func="dscR">Realm: Z to A</button>
+        <button class="dropdown-item" type="button" data-func="ascP">Progress: Lowest First</button>
+        <button class="dropdown-item" type="button" data-func="dscP">Progress: Highest First</button>
+    </div>
+</div>
 <div id="contents"></div>
 <script>
+    const sortName = (fn, a, b)=>d3[fn]($('.realm-name', a)[0].innerText, $('.realm-name', b)[0].innerText)
+    const sortProgress = (fn, a, b)=>d3[fn]($('.realm-progress', a).data('progress'), $('.realm-progress', b).data('progress'))
+    const sortFuncs = {
+        ascR: (a,b)=>sortName('ascending', a, b),
+        dscR: (a,b)=>sortName('descending', a, b),
+        ascP: (a,b)=>sortProgress('ascending', a, b),
+        dscP: (a,b)=>sortProgress('descending', a, b)
+    }
+    $('.dropdown-menu button').click((e)=>{
+        $(e.target).addClass('active').siblings().removeClass('active')
+        const accordions = $('#contents > .accordion').get()
+        accordions.sort(sortFuncs[$(e.target).data('func')])
+        for (let i = 0; i < accordions.length; i++) {
+            accordions[i].parentNode.appendChild(accordions[i])
+        }
+    })
     const ITEMS = [{name:'copper bar',total:90000},{name:'iron bar',total:28000},{name:'thorium bar',total:24000},{name:'stranglekelp',total:33000},{name:'purple lotus',total:26000},{name:'arthas tear',total:20000},{name:'light leather',total:180000},{name:'medium leather',total:110000},{name:'thick leather',total:80000},{name:'linen bandage',total:800000},{name:'silk bandage',total:600000},{name:'runecloth bandage',total:400000},{name:'rainbow fin albacore',total:14000},{name:'roast raptor',total:20000},{name:'spotted yellowtail',total:17000},{name:'tin bar',total:22000},{name:'mithril bar',total:18000},{name:'peacebloom',total:96000},{name:'firebloom',total:19000},{name:'heavy leather',total:60000},{name:'rugged leather',total:60000},{name:'wool bandage',total:250000},{name:'mageweave bandage',total:250000},{name:'lean wolf steak',total:10000},{name:'baked salmon',total:10000}];
     const HORDE_TOTAL = 1408000;
     const ALLIANCE_TOTAL = 2442000;
+    const ALL_REALMS_NAME = 'All Realms'
 
+    const allAllianceItems = []
+    const allHordeItems = []
+    let totalAllianceProgress = 0
+    let totalAllianceTotal = 0
+    let totalHordeProgress = 0
+    let totalHordeTotal = 0
+
+    const addTo = (arr, data)=>{
+        for (let i=0;i<data.length;i++){
+            if (arr[i] === undefined){
+                arr[i] = {...data[i]}
+                continue
+            }
+            arr[i].current += data[i].current
+            arr[i].total += data[i].total
+            arr[i].progress = (arr[i].current/arr[i].total).toFixed(4)
+        }
+    }
+
+    const now = Date.now() + new Date().getTimezoneOffset() * 60 * 1000
+    let minCaptureDate = now
     realmData = window.realmData.map(d=>{
         const parseFactionData = i=>{
             const item = ITEMS[i.i]
             const progress = (i.c/item.total).toFixed(4)
-            return {item:ITEMS[i.i].name, current: i.c, total: ITEMS[i.i].total, progress: progress}
+            return {item:item.name, current: i.c, total: item.total, progress: progress}
         };
         const allianceData = d.a.map(parseFactionData)
+        addTo(allAllianceItems, allianceData)
         const allianceProgress = allianceData.reduce((a,c)=>a+c.current, 0)
+        totalAllianceProgress += allianceProgress
+        totalAllianceTotal += ALLIANCE_TOTAL
         const hordeData = d.h.map(parseFactionData)
+        addTo(allHordeItems, hordeData)
         const hordeProgress = hordeData.reduce((a,c)=>a+c.current, 0)
+        totalHordeProgress += hordeProgress
+        totalHordeTotal += HORDE_TOTAL
+        const overallProgress = ((allianceProgress+hordeProgress)/(ALLIANCE_TOTAL+HORDE_TOTAL)).toFixed(4)
+        const captureDate = new Date(d.cap)
+        if (captureDate < minCaptureDate && overallProgress < 1) {
+            minCaptureDate = captureDate;
+        }
         return {
-            captureDate: d.cap,
+            captureDate: captureDate,
             realm: d.r,
-            overallProgress: ((allianceProgress+hordeProgress)/(ALLIANCE_TOTAL+HORDE_TOTAL)).toFixed(4),
+            overallProgress: overallProgress,
             allianceProgress: (allianceProgress/ALLIANCE_TOTAL).toFixed(4),
             allianceData: allianceData,
             hordeProgress: (hordeProgress/HORDE_TOTAL).toFixed(4),
             hordeData: hordeData
         }
     })
-    //realmData = realmData.sort((a,b)=>d3.ascending(a.realm, b.realm))
+
+    const allRealms = {
+        captureDate: minCaptureDate,
+        realm: ALL_REALMS_NAME,
+        overallProgress: ((totalAllianceProgress+totalHordeProgress)/(totalAllianceTotal+totalHordeTotal)).toFixed(4),
+        allianceProgress: (totalAllianceProgress/totalAllianceTotal).toFixed(4),
+        allianceData: allAllianceItems,
+        hordeProgress: (totalHordeProgress/totalHordeTotal).toFixed(4),
+        hordeData: allHordeItems
+    }
+    realmData.unshift(allRealms)
 
     // const color = d3.scaleLinear()
     //     .domain([0, 50, 100])
@@ -138,6 +217,7 @@
         .domain([1, step(2), step(3), step(4), step(5), step(6), step(7), 100])
         .range(['#d73027', '#f46d43', '#fdae61', '#fee08b', '#d9ef8b', '#a6d96a', '#66bd63', '#1a9850'])
         .interpolate(d3.interpolateHcl)
+    const oppositeStepCutoff = 82.5
 
     function drawChart(selector, data) {
         const margin = {
@@ -190,24 +270,23 @@
             .attr("y", d => y(d.item) + y.bandwidth() / 2 + 4)
             .attr("x", width)
             .text(d => `${(d.progress * 100).toFixed(2)}%`);
+
         bars.append("text")
-            .attr("class", "label inner-label")
+            .attr("class", d=>"label inner-label"+(d.progress*100>oppositeStepCutoff?" opposite":""))
             .attr("y", d => y(d.item) + y.bandwidth() / 2 + 4)
             .attr("x", 3)
-            .text(d => `${d.current} / ${d.total}`);
+            .text(d => `${d.current.toLocaleString()} / ${d.total.toLocaleString()}`);
     }
 
     const content = document.querySelector('#contents')
     content.innerHTML = ""
-    const now = Date.now() + new Date().getTimezoneOffset() * 60 * 1000
 
     for (let i = 0; i < realmData.length; i++) {
         const data = realmData[i]
         const template = document.querySelector('#realmTemplate')
         const clone = template.content.cloneNode(true)
 
-        const updatedDate = new Date(data.captureDate)
-        let difference_ms = now - updatedDate;
+        let difference_ms = now - data.captureDate
         difference_ms = difference_ms / 1000;
         const seconds = Math.floor(difference_ms % 60);
         difference_ms = difference_ms / 60;
@@ -238,8 +317,14 @@
 
         const mainWrapper = clone.querySelector('.accordion')
         mainWrapper.setAttribute('id', accordionId)
+        if (data.realm === ALL_REALMS_NAME) {
+            $(mainWrapper).addClass('all-realms')
+        }
         const header = clone.querySelector('.card-header')
         header.setAttribute('id', headerId)
+        if (data.overallProgress*100 > oppositeStepCutoff) {
+            header.setAttribute('class', `${header.getAttribute('class')} opposite`)
+        }
         const realmProgressUnderlay = header.querySelector('.progress-underlay')
         realmProgressUnderlay.setAttribute('style', `background-color: ${color(data.overallProgress * 100)}; width: ${data.overallProgress * 100}%`)
         const collapse = clone.querySelector('.collapse')
@@ -254,6 +339,7 @@
         realmName.textContent = data.realm
         const realmProgress = headerButton.querySelector('.realm-progress')
         realmProgress.textContent = `${(data.overallProgress * 100).toFixed(2)}%`
+        $(realmProgress).data('progress', data.overallProgress)
         const realmUpdate = headerButton.querySelector('.last-update')
         realmUpdate.textContent = updatedDisplayText
         if (data.overallProgress > 0.99999) {
