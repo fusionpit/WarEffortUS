@@ -9,7 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/js/bootstrap.min.js" integrity="sha384-XEerZL0cuoUbHE4nZReLT7nx9gQrQreJekYhJD9WNWhH8nEW+0c5qq7aIo2Wl30J" crossorigin="anonymous"></script>
     <script src="https://d3js.org/d3.v5.min.js" charset="utf-8"></script>
-    <script src="https://weusapi.herokuapp.com/data/current.js"></script>
+   
     <style>
         body {
             font-family: "Arial", sans-serif;
@@ -121,7 +121,7 @@
 </div>
 <div id="contents"></div>
 <script>
-
+    window.realmData = []
     const sortName = (fn, a, b)=>{
         let aData, bData
         if (a.realm) {
@@ -170,7 +170,7 @@
     const ALLIANCE_TOTAL = 2442000;
     const ALL_REALMS_NAME = 'All Realms'
 
-    const completeRealms = ["Anathema","Arcanite Reaper","Arugal","Ashkandi","Atiesh","Azuresong","Benediction","Bigglesworth","Blaumeux","Bloodsail Buccaneers","Deviate Delight","Earthfury","Faerlina","Fairbanks","Felstriker","Grobbulus","Heartseeker","Herod","Incendius","Kirtonos","Kromcrush","Kurinnaxx","Loatheb","Mankrik","Myzrael","Netherwind","Old Blanchy","Pagle","Rattlegore","Remulos","Skeram","Smolderweb","Stalagg","Sulfuras","Thalnos","Thunderfury","Westfall","Whitemane","Windseeker","Yojamba"]
+    const completeRealms = ["Anathema","Arcanite Reaper","Arugal","Ashkandi","Atiesh","Azuresong","Benediction","Bigglesworth","Blaumeux","Bloodsail Buccaneers","Deviate Delight","Earthfury","Faerlina","Fairbanks","Felstriker","Grobbulus","Heartseeker","Herod","Incendius","Kirtonos","Kromcrush","Kurinnaxx","Loatheb","Mankrik","Myzrael","Netherwind","Old Blanchy","Pagle","Rattlegore","Remulos","Skeram","Smolderweb","Stalagg","Sulfuras","Sul'thraze","Thalnos","Thunderfury","Westfall","Whitemane","Windseeker","Yojamba"]
     const completeHordeJson = [{"i":0,"c":90000},{"i":15,"c":22000},{"i":16,"c":18000},{"i":17,"c":96000},{"i":18,"c":19000},{"i":4,"c":26000},{"i":19,"c":60000},{"i":8,"c":80000},{"i":20,"c":60000},{"i":21,"c":250000},{"i":22,"c":250000},{"i":11,"c":400000},{"i":23,"c":10000},{"i":14,"c":17000},{"i":24,"c":10000}]
     const completeAllianceJson = [{"i":0,"c":90000},{"i":1,"c":28000},{"i":2,"c":24000},{"i":3,"c":33000},{"i":4,"c":26000},{"i":5,"c":20000},{"i":6,"c":180000},{"i":7,"c":110000},{"i":8,"c":80000},{"i":9,"c":800000},{"i":10,"c":600000},{"i":11,"c":400000},{"i":12,"c":14000},{"i":13,"c":20000},{"i":14,"c":17000}]
     const allAllianceItems = []
